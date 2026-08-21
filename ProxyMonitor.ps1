@@ -239,20 +239,20 @@ function Install-ProxyMonitorService {
 }
 
 Clear-Host
-Write-Host 'STWB ProxyMonitor Installation V.1.0' -ForegroundColor Cyan
+Write-Host 'STWB ProxyMonitor V.1.0' -ForegroundColor Cyan
 
 if (-not (Test-Administrator)) {
     Write-Host 'Fehler: Administrator erforderlich' -ForegroundColor Red
-    exit 1
+    return
 }
 
-if (-not (Ensure-Directory -Path $localDir)) { exit 1 }
+if (-not (Ensure-Directory -Path $localDir)) { return }
 Write-Log "Start - Benutzer: $env:USERNAME, Computer: $env:COMPUTERNAME"
 
-if ($NetworkPath -and (-not (Test-NetworkPath -Path $NetworkPath))) { exit 1 }
+if ($NetworkPath -and (-not (Test-NetworkPath -Path $NetworkPath))) { return }
 $nssmPath = Install-NSSM
-if (-not $nssmPath) { exit 1 }
-if (-not (Create-ProxyMonitorScript -Path $LocalScriptPath)) { exit 1 }
-if (-not (Install-ProxyMonitorService -ScriptPath $LocalScriptPath -NssmPath $nssmPath)) { exit 1 }
+if (-not $nssmPath) { return }
+if (-not (Create-ProxyMonitorScript -Path $LocalScriptPath)) { return }
+if (-not (Install-ProxyMonitorService -ScriptPath $LocalScriptPath -NssmPath $nssmPath)) { return }
 
 Write-Host "Installation erfolgreich. Dienst-Log: $(Join-Path $localDir 'ProxyMonitor.log')" -ForegroundColor Green
