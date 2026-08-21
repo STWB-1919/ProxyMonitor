@@ -31,6 +31,28 @@ function Test-Administrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Get-BuildVersion {
+    try {
+        $commit = Invoke-RestMethod -Uri 'https://api.github.com/repos/STWB-1919/ProxyMonitor/commits/main' -Headers @{ 'User-Agent' = 'ProxyMonitor-Installer' } -ErrorAction Stop
+        if ($commit.sha) {
+            return "commit $($commit.sha.Substring(0, 7))"
+        }
+    }
+    catch {
+    }
+
+    if ($PSCommandPath -and (Test-Path -LiteralPath $PSCommandPath -PathType Leaf)) {
+        try {
+            $hash = (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256 -ErrorAction Stop).Hash
+            return "build $($hash.Substring(0, 7))"
+        }
+        catch {
+        }
+    }
+
+    return 'local'
+}
+
 function Ensure-Directory {
     param([Parameter(Mandatory)] [string]$Path)
 
@@ -239,7 +261,7 @@ function Install-ProxyMonitorService {
 }
 
 Clear-Host
-Write-Host 'STWB ProxyMonitor V.1.1' -ForegroundColor Cyan
+Write-Host "STWB ProxyMonitor ($(Get-BuildVersion))" -ForegroundColor Cyan
 
 if (-not (Test-Administrator)) {
     Write-Host 'Fehler: Administrator erforderlich' -ForegroundColor Red
