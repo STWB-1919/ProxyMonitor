@@ -113,7 +113,7 @@ function Create-ProxyMonitorScript {
 
     $script = @'
 $logPath = 'C:\install\ProxyMonitor\ProxyMonitor.log'
-$checkInterval = 30
+$checkInterval = 5
 
 function Write-Log {
     param([Parameter(Mandatory)] [string]$Message)
@@ -239,7 +239,7 @@ function Install-ProxyMonitorService {
 }
 
 Clear-Host
-Write-Host 'STWB ProxyMonitor V.1.0' -ForegroundColor Cyan
+Write-Host 'STWB ProxyMonitor V.1.1' -ForegroundColor Cyan
 
 if (-not (Test-Administrator)) {
     Write-Host 'Fehler: Administrator erforderlich' -ForegroundColor Red
